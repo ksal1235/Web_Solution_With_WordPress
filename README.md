@@ -170,6 +170,9 @@ sudo blkid
 ```
 sudo vi /etc/fstab
 ```
+![image](https://github.com/user-attachments/assets/3837a03e-e274-4251-a1b8-6c7350721ee8)
+
+
 Update /etc/fstab in this format using your own UUID and rememeber to remove the leading and ending quotes.
 24. Test the configuration and reload the daemon.
 ```
@@ -180,4 +183,7 @@ sudo systemctl daemon-reload
 ```
 df -h
 ```
-26. 
+![image](https://github.com/user-attachments/assets/fdcc297b-87b4-47d8-ae71-797cebb56826)
+
+# Step 2 — Prepare the Database Server
+NOTE: Launch a second RedHat EC2 instance that will have a role - 'DB Server' Repeat the same steps as for the Web Server, but instead of apps-lv create db-lv and mount it to /db directory instead of /var/www/html/.
