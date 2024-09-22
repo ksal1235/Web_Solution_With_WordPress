@@ -187,3 +187,46 @@ df -h
 
 # Step 2 — Prepare the Database Server
 NOTE: Launch a second RedHat EC2 instance that will have a role - 'DB Server' Repeat the same steps as for the Web Server, but instead of apps-lv create db-lv and mount it to /db directory instead of /var/www/html/.
+
+1. Update the repository.
+```
+sudo yum -y update
+```
+
+2. Install wget, Apache and it's dependencies.
+```
+sudo yum -y install wget httpd php php-mysqlnd php-fpm php-json
+```
+
+3. Start apache.
+```
+sudo systemctl enable httpd && sudo systemctl start httpd
+```
+4. To install PHP and it's dependencies.
+```
+sudo yum install php php-opcache php-gd php-curl php-mysqlnd
+sudo systemctl start php-fpm
+sudo systemctl enable php-fpm
+setsebool -P httpd_execmem 1
+```
+
+```
+sudo wget http://wordpress.org/latest.tar.gz sudo tar xzvf latest.tar.gz
+```
+
+```
+sudo yum -y install wget httpd php php-mysqlnd php-fpm php-json
+```
+```
+sudo systemctl enable httpd && sudo systemctl start httpd
+```
+```
+sudo tar xzvf latest.tar.gz
+```
+sudo rm -rf latest.tar.gz
+sudo cp wordpress/wp-config-sample.php wordpress/wp-config.php
+sudo cp -R wordpress /var/www/html/
+sudo chown -R apache:apache /var/www/html/wordpress
+sudo chcon -t httpd_sys_rw_content_t /var/www/html/wordpress -R
+sudo setsebool -P httpd_can_network_connect=1
+
