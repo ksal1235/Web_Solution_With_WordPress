@@ -188,10 +188,15 @@ df -h
 # Step 2 — Prepare the Database Server
 NOTE: Launch a second RedHat EC2 instance that will have a role - 'DB Server' Repeat the same steps as for the Web Server, but instead of apps-lv create db-lv and mount it to /db directory instead of /var/www/html/.
 
+![image](https://github.com/user-attachments/assets/915b81ad-747c-4413-b7c3-fdc0e02dba71)
+
+
+Step 3 — Install WordPress on your Web Server EC2 Which we have already Setup Before.
 1. Update the repository.
 ```
 sudo yum -y update
 ```
+![image](https://github.com/user-attachments/assets/6bf73e6e-4c60-4c5b-b276-2c8ce8bca3e5)
 
 2. Install wget, Apache and it's dependencies.
 ```
@@ -204,29 +209,68 @@ sudo systemctl enable httpd && sudo systemctl start httpd
 ```
 4. To install PHP and it's dependencies.
 ```
+sudo yum install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+sudo yum install yum-utils http://rpms.remirepo.net/enterprise/remi-release-8.rpm
+sudo yum module list php && sudo yum module reset php
 sudo yum install php php-opcache php-gd php-curl php-mysqlnd
 sudo systemctl start php-fpm
 sudo systemctl enable php-fpm
-setsebool -P httpd_execmem 1
+sudo setsebool -P httpd_execmem 1
 ```
-
+5. Restart Apache
 ```
-sudo wget http://wordpress.org/latest.tar.gz sudo tar xzvf latest.tar.gz
+sudo systemctl restart httpd
 ```
-
+6. Download wordpress and copy wordpress to /var/www/html mkdir wordpress cd wordpress
 ```
-sudo yum -y install wget httpd php php-mysqlnd php-fpm php-json
-```
-```
-sudo systemctl enable httpd && sudo systemctl start httpd
-```
-```
-sudo tar xzvf latest.tar.gz
-```
+sudo wget http://wordpress.org/latest.tar.gz && sudo tar xzvf latest.tar.gz
 sudo rm -rf latest.tar.gz
 sudo cp wordpress/wp-config-sample.php wordpress/wp-config.php
 sudo cp -R wordpress /var/www/html/
 sudo chown -R apache:apache /var/www/html/wordpress
 sudo chcon -t httpd_sys_rw_content_t /var/www/html/wordpress -R
 sudo setsebool -P httpd_can_network_connect=1
+```
 
+# Step 4 — Install MySQL on your DB Server EC2.
+
+Update the package
+```
+sudo yum update
+```
+```
+sudo yum install mysql-server
+```
+```
+sudo systemctl restart mysqld
+```
+```
+sudo systemctl enable mysqld
+```
+# Step 5 — Configure DB to work with WordPress
+
+![image](https://github.com/user-attachments/assets/f291c10f-ad85-4558-a53f-8178642804b9)
+
+```
+sudo mysql
+CREATE DATABASE wordpress;
+CREATE USER `myuser`@`<Web-Server-Private-IP-Address>` IDENTIFIED BY 'mypass';
+GRANT ALL ON wordpress.* TO 'myuser'@'<Web-Server-Private-IP-Address>';
+FLUSH PRIVILEGES;
+SHOW DATABASES;
+exit
+```
+
+# Step 6 — Configure WordPress to connect to remote database.
+
+hint: Do not forget to open MySQL port 3306 on DB Server EC2. For extra security, you shall allow access to the DB server ONLY from your Web Server's IP address, so in the Inbound Rule configuration specify source as /32
+![image](https://github.com/user-attachments/assets/094f38e5-a99a-4ffa-9856-e90f0cf46ce4)
+
+1. Install MySQL client and test that you can connect from your Web Server to your DB server by using mysql-client.
+```
+sudo yum install https://dev.mysql.com/get/mysql80-community-release-el8-3.noarch.rpm
+sudo yum install mysql
+sudo yum install mysql-community-client
+mysql --version
+
+```
