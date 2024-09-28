@@ -362,8 +362,9 @@ bind-address = 0.0.0.0
 
 4. Try to access from your browser the link to your WordPress http://<Web-Server-Public-IP-Address>/wordpress/
 
-![image](https://github.com/user-attachments/assets/da9e413c-bd43-4d4f-bfe2-549e8fc84dbd)
+![image](https://github.com/user-attachments/assets/47b49f6a-bfbb-44ee-82cb-eef712d2fe13)
 
+![image](https://github.com/user-attachments/assets/7b388ab4-6b82-4182-aa91-0dd36125d70d)
 
 # CONCLUSION
 
