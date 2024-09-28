@@ -269,9 +269,7 @@ hint: Do not forget to open MySQL port 3306 on DB Server EC2. For extra security
 
 1. Install MySQL client and test that you can connect from your Web Server to your DB server by using mysql-client.
 ```
-sudo yum install https://dev.mysql.com/get/mysql80-community-release-el8-3.noarch.rpm
-sudo yum install mysql
-sudo yum install mysql-community-client
-mysql --version
 
+sudo yum install mysql
+sudo mysql -u admin -p -h <DB-Server-Private-IP-address>
 ```
