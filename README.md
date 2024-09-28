@@ -268,8 +268,101 @@ hint: Do not forget to open MySQL port 3306 on DB Server EC2. For extra security
 ![image](https://github.com/user-attachments/assets/094f38e5-a99a-4ffa-9856-e90f0cf46ce4)
 
 1. Install MySQL client and test that you can connect from your Web Server to your DB server by using mysql-client.
-```
 
+```
 sudo yum install mysql
 sudo mysql -u admin -p -h <DB-Server-Private-IP-address>
 ```
+2. Change permissions and configuration so Apache could use WordPress:
+
+After Login to databases
+```
+show databases;
+```
+![image](https://github.com/user-attachments/assets/65bb3154-c461-4113-bb9e-bc95ab36fa97)
+
+4. Change permissions and configuration so Apache could use WordPress:
+
+To configure Apache to use WordPress, you'll need to adjust permissions and make some configuration changes. Here's a step-by-step guide:
+
+a. Set correct ownership:
+
+```
+sudo chown -R apache:apache /var/www/html/wordpress
+Set correct permissions:
+```
+```
+sudo find /var/www/html/wordpress -type d -exec chmod 755 {} \;
+sudo find /var/www/html/wordpress -type f -exec chmod 644 {} \;
+Make sure Apache can write to wp-content:
+````
+sudo chmod -R 775 /var/www/html/wordpress/wp-content
+b. Configure Apache:
+
+c. Edit your Apache configuration file (often /etc/httpd/conf/httpd.conf or /etc/apache2/sites-available/000-default.conf):
+```
+sudo nano /etc/httpd/conf/httpd.conf
+```
+d. Add or modify the following:
+```
+<Directory /var/www/html/wordpress>
+    AllowOverride All
+</Directory>
+```
+e. Enable mod_rewrite:
+
+```
+sudo a2enmod rewrite
+```
+f. Restart Apache:
+```
+sudo systemctl restart httpd
+or
+
+sudo service apache2 restart
+```
+d. Create a wp-config.php file:
+```
+cp /var/www/html/wordpress/wp-config-sample.php /var/www/html/wordpress/wp-config.php
+```
+
+e. Edit wp-config.php with your database details:
+```
+sudo nano /var/www/html/wordpress/wp-config.php
+```
+
+f. Update these lines:
+```
+define('DB_NAME', 'your_database_name');
+define('DB_USER', 'your_database_user');
+define('DB_PASSWORD', 'your_database_password');
+define('DB_HOST', 'localhost');
+```
+g. Set proper SELinux contexts (if SELinux is enabled):
+```
+sudo chcon -R -t httpd_sys_content_t /var/www/html/wordpress
+sudo chcon -R -t httpd_sys_rw_content_t /var/www/html/wordpress/wp-content
+```
+h. If using a firewall, ensure port 80 (and 443 for HTTPS) is open:
+```
+sudo firewall-cmd --permanent --add-service=http
+sudo firewall-cmd --permanent --add-service=https
+sudo firewall-cmd --reload
+```
+i. Now configuring the mysql
+```
+sudo nano /etc/my.cnf
+```
+
+Adding Bind Ip Block;
+```
+[mysqld]
+bind-address = 0.0.0.0
+```
+
+4. Try to access from your browser the link to your WordPress http://<Web-Server-Public-IP-Address>/wordpress/
+
+![image](https://github.com/user-attachments/assets/da9e413c-bd43-4d4f-bfe2-549e8fc84dbd)
+
+
+# CONCLUSION
