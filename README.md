@@ -67,7 +67,8 @@ The attache EBS Volume their names will likely be xvdbf xvdbg xvdbh.
 sudo gdisk /dev/xvdbf
 ```
 
-Create a new partition
+Create a new partition:
+
 a) Type n to create a new partition.
 b) Press Enter to select the default partition number
 c) Press Enter to accept the default last sector.
